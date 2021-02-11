@@ -34,6 +34,10 @@ int main() {
         case GIF:
             std::cout << "GIF\n";
             break;
+            
+        case BMP:
+            std::cout << "BMP\n";
+            break;
     }
     
     return 0;
