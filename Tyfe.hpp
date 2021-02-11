@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include <bits/stdc++.h> 
 
 // Required filesystem flag (-lstdc++fs) & 
 // C++17-supported compiler
@@ -22,6 +22,7 @@
 
 //#include <functional>
 
+typedef unsigned short UINT16;
 typedef unsigned char* UCHARP;
 
 // Supported types
@@ -44,6 +45,15 @@ class Tyfe {
         "bash",
         "fla"
     };*/
+    
+    std::vector<std::string> binary_ext = {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".gif"
+    };
+    
+    std::vector<std::string>::iterator binary_ext_iter;
 public:
     /* Some markers & magics for detect type of file */ 
     enum MARKERS : const UINT16 {
@@ -89,10 +99,10 @@ public:
         filename  = file;
         extension = std::filesystem::path(filename).extension();
         
-        // TODO: Add std::string vector.
-        if(ext(".jpg", ".jpeg")
-            || ext(".png", "")
-            || ext(".gif", "")) {
+        binary_ext_iter = std::find(binary_ext.begin(), 
+                binary_ext.end(), extension);
+                
+        if(binary_ext_iter != binary_ext.end()) {
             return what_is_this();
         } else {
             return is_shebang(); 
