@@ -48,6 +48,10 @@ int main() {
         case PDF:
             std::cout << "PDF\n";
             break;
+            
+        case ICO:
+            std::cout << "ICO\n";
+            break;
     }
     
     return 0;

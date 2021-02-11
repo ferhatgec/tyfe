@@ -34,6 +34,7 @@ enum TYFES {
     BMP,
     WEBP,
     PDF,
+    ICO,
     
     FLASCRIPT,
     BASH,
@@ -57,7 +58,8 @@ class Tyfe {
         ".gif",
         ".bmp",
         ".webp",
-        ".pdf"
+        ".pdf",
+        ".ico"
     };
     
     std::vector<std::string>::iterator binary_ext_iter;
@@ -87,9 +89,12 @@ public:
         PDF_SOI           = 0x25,
         PDF_START_2       = 0x50,
         PDF_START_3       = 0x44,
-        PDF_START_4       = 0x46
-    };
+        PDF_START_4       = 0x46,
         
+        ICO_SOI           = 0x00,
+        ICO_START_3       = 0x01
+    };
+
     /*
     template<typename T>
     struct check_type {
@@ -180,6 +185,13 @@ public:
             && marker[2] == PDF_START_3
             && marker[3] == PDF_START_4) {
             return PDF;
+        }
+        
+        if(marker[0] == ICO_SOI
+            && marker[1] == ICO_SOI
+            && marker[2] == ICO_START_3
+            && marker[3] == ICO_SOI) {
+            return ICO;
         }
         
         return NOTHING;
