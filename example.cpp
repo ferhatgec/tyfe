@@ -38,6 +38,10 @@ int main() {
         case BMP:
             std::cout << "BMP\n";
             break;
+            
+        case WEBP:
+            std::cout << "WEBP\n";
+            break;
     }
     
     return 0;

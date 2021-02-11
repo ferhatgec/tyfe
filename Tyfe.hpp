@@ -32,6 +32,9 @@ enum TYFES {
     PNG,
     GIF,
     BMP,
+    WEBP,
+    
+    
     FLASCRIPT,
     BASH,
     SH
@@ -52,7 +55,8 @@ class Tyfe {
         ".jpeg",
         ".png",
         ".gif",
-        ".bmp"
+        ".bmp",
+        ".webp"
     };
     
     std::vector<std::string>::iterator binary_ext_iter;
@@ -72,7 +76,12 @@ public:
         GIF_START_3       = 0x46,
         
         BMP_SOI           = 0x42,
-        BMP_START_2       = 0x4D
+        BMP_START_2       = 0x4D,
+        
+        WEBP_SOI          = 0x57,
+        WEBP_START_2      = 0x45,
+        WEBP_START_3      = 0x42,
+        WEBP_START_4      = 0x50,
     };
     
     /*
@@ -151,6 +160,13 @@ public:
         if(marker[0] == BMP_SOI
             && marker[1] == BMP_START_2) {
             return BMP;   
+        }
+
+        if(marker[8] == WEBP_SOI
+            && marker[9] == WEBP_START_2
+            && marker[10]== WEBP_START_3
+            && marker[11]== WEBP_START_4) {
+            return WEBP;
         }
         
         return NOTHING;
