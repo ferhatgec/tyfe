@@ -6,6 +6,8 @@ int main() {
     
     std::string data;
     
+    std::cout << "File: ";
+    
     std::cin >> data;
      
     std::cout << "File type: ";
@@ -41,6 +43,10 @@ int main() {
             
         case WEBP:
             std::cout << "WEBP\n";
+            break;
+            
+        case PDF:
+            std::cout << "PDF\n";
             break;
     }
     
