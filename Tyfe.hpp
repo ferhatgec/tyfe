@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <bits/stdc++.h> 
+#include <bits/stdc++.h>
 
 // Required filesystem flag (-lstdc++fs) & 
 // C++17-supported compiler
@@ -35,22 +35,22 @@ enum TYFES {
     WEBP,
     PDF,
     ICO,
-    
+
     FLASCRIPT,
     BASH,
     SH
 };
-    
+
 class Tyfe {
     std::string extension,
                 filename;
-                
+
     /*std::vector<std::string> shebang_ext = {
         "sh",
         "bash",
         "fla"
     };*/
-    
+
     std::vector<std::string> binary_ext = {
         ".jpg",
         ".jpeg",
@@ -61,36 +61,36 @@ class Tyfe {
         ".pdf",
         ".ico"
     };
-    
+
     std::vector<std::string>::iterator binary_ext_iter;
 public:
-    /* Some markers & magics for detect type of file */ 
+    /* Some markers & magics for detect type of file */
     enum MARKERS : const UINT16 {
         JPEG_SOI          = 0xD8,
         JPEG_START        = 0xFF,
-        
+
         PNG_SOI           = 0x89,
         PNG_START_2       = 0x50,
         PNG_START_3       = 0x4E,
         PNG_START_4       = 0x47,
-        
+
         GIF_SOI           = 0x47,
         GIF_START_2       = 0x49,
         GIF_START_3       = 0x46,
-        
+
         BMP_SOI           = 0x42,
         BMP_START_2       = 0x4D,
-        
+
         WEBP_SOI          = 0x57,
         WEBP_START_2      = 0x45,
         WEBP_START_3      = 0x42,
         WEBP_START_4      = 0x50,
-        
+
         PDF_SOI           = 0x25,
         PDF_START_2       = 0x50,
         PDF_START_3       = 0x44,
         PDF_START_4       = 0x46,
-        
+
         ICO_SOI           = 0x00,
         ICO_START_3       = 0x01
     };
@@ -105,72 +105,72 @@ public:
         }
     };
     */
-    
+
     bool ext(std::string  const ext2,
              std::string  const ext3) {
         return ((extension == ext2) || (extension == ext3));
     }
-    
+
     // TODO: Create TYFES to std::string function.
-    
+
     // template<typename T>
     TYFES check(std::string file/* T type */) {
         // check_type<T> __check;
-        
+
         /*if(__check.type() != true) {
             return NOTHING;
         }*/
-        
+
         filename  = file;
         extension = std::filesystem::path(filename).extension();
-        
-        binary_ext_iter = std::find(binary_ext.begin(), 
+
+        binary_ext_iter = std::find(binary_ext.begin(),
                 binary_ext.end(), extension);
-                
+
         if(binary_ext_iter != binary_ext.end()) {
             return what_is_this();
         } else {
-            return is_shebang(); 
+            return is_shebang();
         }
     }
-    
-    
+
+
     TYFES what_is_this() {
         std::ifstream file(filename, std::ios::in | std::ifstream::binary);
-        
+
         /* check file is opened */
-        if(!file.is_open()) { 
-            throw std::runtime_error("tyfe: Can't open file: " + filename); 
-            return NOTHING; 
+        if(!file.is_open()) {
+            throw std::runtime_error("tyfe: Can't open file: " + filename);
+            return NOTHING;
         }
-        
+
         std::string data((std::istreambuf_iterator<char>(file)),
                     (std::istreambuf_iterator<char>()));
-   
+
         UCHARP marker = reinterpret_cast<UCHARP>(&data[0]);
-     
+
         if(marker[0] == JPEG_START
             && marker[1] == JPEG_SOI
             && marker[2] == JPEG_START) {
             return JPEG;
         }
-        
+
         if(marker[0] == PNG_SOI
             && marker[1] == PNG_START_2
             && marker[2] == PNG_START_3
             && marker[3] == PNG_START_4) {
             return PNG;
         }
-        
+
         if(marker[0] == GIF_SOI
             && marker[1] == GIF_START_2
             && marker[2] == GIF_START_3) {
             return GIF;
         }
-        
+
         if(marker[0] == BMP_SOI
             && marker[1] == BMP_START_2) {
-            return BMP;   
+            return BMP;
         }
 
         if(marker[8] == WEBP_SOI
@@ -179,41 +179,79 @@ public:
             && marker[11]== WEBP_START_4) {
             return WEBP;
         }
-        
+
         if(marker[0] == PDF_SOI
             && marker[1] == PDF_START_2
             && marker[2] == PDF_START_3
             && marker[3] == PDF_START_4) {
             return PDF;
         }
-        
+
         if(marker[0] == ICO_SOI
             && marker[1] == ICO_SOI
             && marker[2] == ICO_START_3
             && marker[3] == ICO_SOI) {
             return ICO;
         }
-        
+
         return NOTHING;
     }
-    
+
     TYFES is_shebang() {
         std::ifstream file(filename, std::ios::in | std::ios::app);
-        
+
         std::string   __file;
-        
+
         do {
             if(__file[0] == '#' && __file[1] == '!') {
                 __file = __file.erase(0, (std::filesystem::path(__file).parent_path().string()).length());
-                
-                if(__file.find("fla") != std::string::npos)      return FLASCRIPT; 
-                
-                if(__file.find("sh")  !=  std::string::npos 
+
+                if(__file.find("fla") != std::string::npos)      return FLASCRIPT;
+
+                if(__file.find("sh")  !=  std::string::npos
                     && __file.find("bash") == std::string::npos) return SH;
-                else 
+                else
                     return BASH;
             }
         } while(std::getline(file, __file));
+
+        return NOTHING;
+    }
+
+    std::string type(std::string type) {
+        switch(check(type)) {
+            case JPEG:
+                return "JPEG";
+
+            case FLASCRIPT:
+                return "FlaScript";
+
+            case BASH:
+                return "BASH";
+
+            case SH:
+                return "SH";
+
+            case PNG:
+                return "PNG";
+
+            case GIF:
+                return "GIF";
+
+            case BMP:
+                return "BMP";
+
+            case WEBP:
+                return "WEBP";
+
+            case PDF:
+                return "PDF";
+
+            case ICO:
+                return "ICO";
+        }
+
+        return "";
     }
 };
 
